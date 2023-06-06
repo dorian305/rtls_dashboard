@@ -1,15 +1,44 @@
 import { port, protocol, endpoint } from "./websocketInit.js";
 
+let socketId = "";
 const socket = new WebSocket(`${protocol}://${endpoint}:${port}`);
 
-let socketId = "";
-
+/**
+ * Display initial "connecting to server" popup.
+ */
+Swal.fire({
+    title: "Connecting to the server...",
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    didOpen: () => {
+        Swal.showLoading();
+    },
+    customClass: {
+        container: "swal-container",
+        popup: "swal-popup",
+        confirmButton: "swal-button-confirm",
+        input: "swal-input",
+    },
+});
 
 socket.addEventListener('open', event => {
     /**
      * Request information about the connected devices.
      */
     socket.send(JSON.stringify({type: "fetchInitial"}));
+
+    /**
+     * Display toast for fetching data from server.
+     */
+    Swal.fire({
+        title: `Getting connected devices...`,
+        toast: true,
+        position: "top",
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
 });
 
 
@@ -72,13 +101,26 @@ socket.addEventListener('message', event => {
          * When dashboard connects to the server, it requests information about the connected devices and socket id.
          * Once the information is obtained, store it, create markers for each device
          * and display their positions on the map. Also add the devices in the left panel.
+         * 
+         * Create toast notification that devices have been fetched.
          */
+        const numberOfDevices = connectedDevices.length;
         connectedDevices = data.connectedDevices;
         socketId = data.socketId;
 
         connectedDevices.forEach(device => {
             device.marker = createMarker(device);
             addDeviceToList(device);
+        });
+
+        Swal.fire({
+            title: numberOfDevices > 0 ? `Fetched connected devices (${numberOfDevices})` : `No devices connected`,
+            toast: true,
+            position: "top",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            icon: "success",
         });
     }
 

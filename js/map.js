@@ -4,11 +4,19 @@ let markers = L.layerGroup()
 const mapContainer = document.querySelector("#map");
 const deviceListContainer = document.querySelector("#devices-list");
 
-
 /**
- * Creating leaflet map.
+ * Creating leaflet map and panning to current location.
  */
 const map = L.map(mapContainer, {attributionControl: false}).setView([45.328404, 14.469973], zoomLevel);
+if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var latitude = position.coords.latitude;
+      var longitude = position.coords.longitude;
+
+      map.setView([latitude, longitude], 15);
+    });
+  }
+
 
 /**
  * Adding marker group and tile layers to the map.
