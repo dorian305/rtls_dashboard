@@ -14,3 +14,9 @@
     background-color: #2b8ced !important;
     outline: none !important;
 }
+
+.swal2-toast {
+    background: #e8f5ff !important;
+    font-family: 'Montserrat', sans-serif !important;
+
+}

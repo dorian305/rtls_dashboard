@@ -109,7 +109,8 @@ socket.addEventListener('message', event => {
          * When a new device connects to the server, server sends us its information for display.
          * Create a new marker for the device and add it to the list of connected devices.
          *
-         * Also add the device to the left panel.
+         * Add the device to the left panel.
+         * Display a popup notification that new device has connected.
          */
         const newlyConnectedDevice = data.device
 
@@ -117,6 +118,16 @@ socket.addEventListener('message', event => {
         connectedDevices.push(newlyConnectedDevice);
 
         addDeviceToList(newlyConnectedDevice);
+
+        Swal.fire({
+            title: `${newlyConnectedDevice.name} connected`,
+            toast: true,
+            position: "top",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            icon: "info",
+        });
     }
 
 
@@ -125,7 +136,8 @@ socket.addEventListener('message', event => {
          * When a device disconnects from the server, server sends us which device has disconnected
          * so we can remove it from the list of connected devices and remove the marker for that device from the map.
          *
-         * Also remove the device from the left panel.
+         * Remove the device from the left panel.
+         * Display a popup notification that device has disconnected.
          */
         const disconnectedDevice = data.device;
         const storedDeviceToRemove = connectedDevices[connectedDevices.findIndex(device => device.id === disconnectedDevice.id)];
@@ -135,6 +147,20 @@ socket.addEventListener('message', event => {
         connectedDevices = connectedDevices.filter(device => device.id !== storedDeviceToRemove.id);
 
         removeDeviceFromList(storedDeviceToRemove);
+
+        Swal.fire({
+            title: `${disconnectedDevice.name} disconnected`,
+            toast: true,
+            position: "top",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            icon: "info",
+            // didOpen: toast => {
+            //     toast.addEventListener("mouseenter", Swal.stopTimer);
+            //     toast.addEventListener("mouseleave", Swal.resumeTimer);
+            // }
+        });
     }
 
 
