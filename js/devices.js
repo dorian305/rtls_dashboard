@@ -104,9 +104,10 @@ socket.addEventListener('message', event => {
          * 
          * Create toast notification that devices have been fetched.
          */
-        const numberOfDevices = connectedDevices.length;
         connectedDevices = data.connectedDevices;
         socketId = data.socketId;
+        
+        const numberOfDevices = connectedDevices.length;
 
         connectedDevices.forEach(device => {
             device.marker = createMarker(device);
