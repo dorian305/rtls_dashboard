@@ -100,10 +100,6 @@ nav {
     border-bottom: none;
 }
 
-.connected-device-elem:hover {
-    background-color: #2c3e50;
-}
-
 .device-information {
     display: flex;
     flex-flow: row;
