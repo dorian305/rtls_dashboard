@@ -91,7 +91,7 @@ const followDevice = function(button, device){
 
         followMarkerIntervalHandler = setInterval(() => {
                 panMap(device.id, device.marker);
-        }, followMarkerInterval * 1000);
+        }, 100);
     }
 }
 
@@ -105,13 +105,5 @@ const panMap = function(deviceId, markerToFollow){
         return;
     }
 
-    const panAnimationDuration = 0.5;
-    const options = {
-        pan: {
-            animate: true,
-            duration: panAnimationDuration,
-        },
-    };
-
-    map.setView(markerToFollow.getLatLng(), zoomLevel, options);
+    map.setView(markerToFollow.getLatLng(), zoomLevel);
 }
