@@ -1,6 +1,7 @@
 import { port, protocol, endpoint } from "./websocketInit.js";
 
 let socketId = "";
+let connectedToServer = false;
 const socket = new WebSocket(`${protocol}://${endpoint}:${port}`);
 
 /**
@@ -39,16 +40,21 @@ socket.addEventListener('open', event => {
             Swal.showLoading();
         },
     });
+
+    connectedToServer = true;
 });
 
 
 /**
- * Lost the connection to the server.
+ * Closing the websocket connection.
  */
 socket.addEventListener('close', event => {
+    const title = connectedToServer === true ? "Connection lost!" : "Server unavailable";
+    const description = connectedToServer === true ? "Connection to the server has been lost." : "Could not connect to the server.";
+
     Swal.fire({
-        title: "Error!",
-        text: "The connection to the websocket server has been lost.",
+        title: title,
+        text: description,
         icon: "error",
         confirmButtonText: "Reload",
         customClass: {
@@ -70,22 +76,7 @@ socket.addEventListener('close', event => {
  * Error when trying to establish a connection to the websocket server.
  */
 socket.addEventListener('error', event => {
-    Swal.fire({
-        title: "Error!",
-        text: "An error occured while communicating with the server.",
-        icon: "error",
-        confirmButtonText: "Reload",
-        customClass: {
-            container: "swal-container",
-            popup: "swal-popup",
-            confirmButton: "swal-button-confirm",
-            input: "swal-input",
-        },
-    }).then(res => {
-        if (res.isConfirmed){
-            location.reload();
-        }
-    });
+    // do something with error...
 });
 
 
