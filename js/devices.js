@@ -139,7 +139,7 @@ socket.addEventListener('message', event => {
          */
         deviceListContainer
         .querySelector(`[data-id="${storedDeviceToUpdate.id}"] [data-type="device-battery"]`)
-        .textContent = storedDeviceToUpdate.battery;
+        .textContent = `${storedDeviceToUpdate.battery}%`;
 
         // console.log(`Received updated coordinates from ${storedDeviceToUpdate.id}`);
         // console.table(storedDeviceToUpdate.coordinates);
@@ -257,7 +257,7 @@ const createDeviceElem = function(device) {
       <div class="device-information">
         <img src="${deviceImageSrc}" class="device-image">
         <span>${device.name}</span>
-        <span class="device-battery" data-type="device-battery">${device.battery}%</span>
+        <span class="device-battery" data-type="device-battery">${device.battery}</span>
       </div>
       <div class="action-buttons">
         <button data-following="false">Track</button>
