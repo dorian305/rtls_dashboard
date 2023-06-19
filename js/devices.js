@@ -117,21 +117,29 @@ socket.addEventListener('message', event => {
     }
 
 
-    if (data.type === "locationUpdate"){
+    if (data.type === "dataUpdate"){
         /**
-         * Every time a connected device sends an updated location information, server sends us that information
+         * Every time a connected device sends an updated information, server sends us that information
          * so we can update stored device's information on the dashboard and display up to date data.
-         * Update the coordinates and marker position.
+         * Update the information and marker position.
          */
         const deviceWithUpdatedInfo = data.device;
         const storedDeviceToUpdate = connectedDevices[connectedDevices.findIndex(device => device.id === deviceWithUpdatedInfo.id)];
-
+        
+        storedDeviceToUpdate.battery = deviceWithUpdatedInfo.battery;
         storedDeviceToUpdate.coordinates.x = deviceWithUpdatedInfo.coordinates.x;
         storedDeviceToUpdate.coordinates.y = deviceWithUpdatedInfo.coordinates.y;
         storedDeviceToUpdate.marker.setLatLng(new L.LatLng(
             storedDeviceToUpdate.coordinates.x,
             storedDeviceToUpdate.coordinates.y,
         ));
+
+        /**
+         * Update battery level.
+         */
+        deviceListContainer
+        .querySelector(`[data-id="${storedDeviceToUpdate.id}"] [data-type="device-battery"]`)
+        .textContent = storedDeviceToUpdate.battery;
 
         // console.log(`Received updated coordinates from ${storedDeviceToUpdate.id}`);
         // console.table(storedDeviceToUpdate.coordinates);
@@ -233,41 +241,32 @@ const removeDeviceFromList = function(device) {
 /**
  * Creating the html element for the connected device.
  */
-const createDeviceElem = function(device){
+const createDeviceElem = function(device) {
     const deviceImageCollection = {
-        mobile: "images/mobile.png",
-        tablet: "images/tablet.png",
-        pc: "images/pc.png",
-    }
+      mobile: "images/mobile.png",
+      tablet: "images/tablet.png",
+      pc: "images/pc.png",
+    };
     const deviceImageSrc = deviceImageCollection[device.type];
-
+  
     const connectedDeviceElem = document.createElement("div");
-    const deviceInformationElem = document.createElement("div");
-    const deviceImageElem = document.createElement("img");
-    const spanElem = document.createElement("span");
-    const actionButtonsElem = document.createElement("div");
-    const actionButtonElem = document.createElement("button");
-
-    connectedDeviceElem.setAttribute("data-id", device.id);
     connectedDeviceElem.setAttribute("class", "connected-device-elem");
-    deviceInformationElem.setAttribute("class", "device-information");
-    deviceImageElem.setAttribute("src", deviceImageSrc);
-    deviceImageElem.setAttribute("class", "device-image");
-    spanElem.textContent = device.name;
-    actionButtonsElem.setAttribute("class", "action-buttons");
-    actionButtonElem.setAttribute("data-following", "false");
-    actionButtonElem.textContent = "Track";
-
-    connectedDeviceElem.appendChild(deviceInformationElem);
-    connectedDeviceElem.appendChild(actionButtonsElem);
-    deviceInformationElem.appendChild(deviceImageElem);
-    deviceInformationElem.appendChild(spanElem);
-    actionButtonsElem.appendChild(actionButtonElem);
-
-    // Add event listener for the follow button
-    actionButtonElem.addEventListener("click", e => {
-        followDevice(e.target, device);
+    connectedDeviceElem.setAttribute("data-id", device.id);
+  
+    connectedDeviceElem.innerHTML = `
+      <div class="device-information">
+        <img src="${deviceImageSrc}" class="device-image">
+        <span>${device.name}</span>
+        <span class="device-battery" data-type="device-battery">${device.battery}</span>
+      </div>
+      <div class="action-buttons">
+        <button data-following="false">Track</button>
+      </div>
+    `;
+  
+    connectedDeviceElem.querySelector("button").addEventListener("click", e => {
+      followDevice(e.target, device);
     });
-
+  
     return connectedDeviceElem;
-}
+};

@@ -125,6 +125,10 @@ main {
     margin: 10px 10px 10px 0;
 }
 
+.device-battery {
+    margin: 10px;
+}
+
 .action-buttons {
     display: flex;
     margin: 10px;
