@@ -126,7 +126,7 @@ socket.addEventListener('message', event => {
         const deviceWithUpdatedInfo = data.device;
         const storedDeviceToUpdate = connectedDevices[connectedDevices.findIndex(device => device.id === deviceWithUpdatedInfo.id)];
         
-        storedDeviceToUpdate.battery = deviceWithUpdatedInfo.battery;
+        storedDeviceToUpdate.battery = deviceWithUpdatedInfo.battery * 100; // Battery is in decimal, convert to percentage by multiplying by 100.
         storedDeviceToUpdate.coordinates.x = deviceWithUpdatedInfo.coordinates.x;
         storedDeviceToUpdate.coordinates.y = deviceWithUpdatedInfo.coordinates.y;
         storedDeviceToUpdate.marker.setLatLng(new L.LatLng(
@@ -257,7 +257,7 @@ const createDeviceElem = function(device) {
       <div class="device-information">
         <img src="${deviceImageSrc}" class="device-image">
         <span>${device.name}</span>
-        <span class="device-battery" data-type="device-battery">${device.battery}</span>
+        <span class="device-battery" data-type="device-battery">${device.battery}%</span>
       </div>
       <div class="action-buttons">
         <button data-following="false">Track</button>
