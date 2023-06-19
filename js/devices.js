@@ -257,7 +257,7 @@ const createDeviceElem = function(device) {
       <div class="device-information">
         <img src="${deviceImageSrc}" class="device-image">
         <span>${device.name}</span>
-        <span class="device-battery" data-type="device-battery">${device.battery}</span>
+        <span class="device-battery" data-type="device-battery">${device.battery}%</span>
       </div>
       <div class="action-buttons">
         <button data-following="false">Track</button>
