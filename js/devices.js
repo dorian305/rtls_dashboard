@@ -126,7 +126,7 @@ socket.addEventListener('message', event => {
         const deviceWithUpdatedInfo = data.device;
         const storedDeviceToUpdate = connectedDevices[connectedDevices.findIndex(device => device.id === deviceWithUpdatedInfo.id)];
         
-        storedDeviceToUpdate.battery = deviceWithUpdatedInfo.battery * 100; // Battery is in decimal, convert to percentage by multiplying by 100.
+        storedDeviceToUpdate.battery = (deviceWithUpdatedInfo.battery * 100).toFixed(0); // Battery is in decimal, convert to percentage by multiplying by 100.
         storedDeviceToUpdate.coordinates.x = deviceWithUpdatedInfo.coordinates.x;
         storedDeviceToUpdate.coordinates.y = deviceWithUpdatedInfo.coordinates.y;
         storedDeviceToUpdate.marker.setLatLng(new L.LatLng(
@@ -135,7 +135,7 @@ socket.addEventListener('message', event => {
         ));
 
         /**
-         * Update battery level.
+         * Update battery.
          */
         const batteryLevelElem = deviceListContainer.querySelector(`[data-id="${storedDeviceToUpdate.id}"] [data-elem="battery-level"]`);
         batteryLevelElem.style.height = storedDeviceToUpdate.battery + "%";
@@ -263,8 +263,6 @@ const createDeviceElem = function(device) {
     const connectedDeviceElem = document.createElement("div");
     connectedDeviceElem.setAttribute("class", "connected-device-elem");
     connectedDeviceElem.setAttribute("data-id", device.id);
-
-    
   
     connectedDeviceElem.innerHTML = `
       <div class="device-information">
