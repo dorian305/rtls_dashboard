@@ -137,9 +137,20 @@ socket.addEventListener('message', event => {
         /**
          * Update battery level.
          */
-        deviceListContainer
-        .querySelector(`[data-id="${storedDeviceToUpdate.id}"] [data-type="device-battery"]`)
-        .textContent = `${storedDeviceToUpdate.battery}%`;
+        const batteryLevelElem = deviceListContainer.querySelector(`[data-id="${storedDeviceToUpdate.id}"] [data-elem="battery-level"]`);
+        batteryLevelElem.style.height = storedDeviceToUpdate.battery + "%";
+        batteryLevelElem.setAttribute("title", `Battery level: ${storedDeviceToUpdate.battery}%`);
+
+        batteryLevelElem.classList.remove("level-critical", "level-warning", "level-stable");
+
+        if (storedDeviceToUpdate.battery < 10) {
+            batteryLevelElem.classList.add("level-critical");
+        } else if (storedDeviceToUpdate.battery < 50) {
+            batteryLevelElem.classList.add("level-warning");
+        } else {
+            batteryLevelElem.classList.add("level-stable");
+        }
+
 
         // console.log(`Received updated coordinates from ${storedDeviceToUpdate.id}`);
         // console.table(storedDeviceToUpdate.coordinates);
@@ -252,12 +263,17 @@ const createDeviceElem = function(device) {
     const connectedDeviceElem = document.createElement("div");
     connectedDeviceElem.setAttribute("class", "connected-device-elem");
     connectedDeviceElem.setAttribute("data-id", device.id);
+
+    
   
     connectedDeviceElem.innerHTML = `
       <div class="device-information">
         <img src="${deviceImageSrc}" class="device-image">
         <span>${device.name}</span>
-        <span class="device-battery" data-type="device-battery">${device.battery}%</span>
+        <div class="battery" data-elem="battery-container">
+            <div class="tip" data-elem="battery-tip"></div>
+            <div class="level" data-elem="battery-level" title=""></div>
+        </div>
       </div>
       <div class="action-buttons">
         <button data-following="false">Track</button>
