@@ -70,29 +70,29 @@ const followDevice = function(button, device){
 
         button.setAttribute("data-following", "false");
         button.textContent = "Track";
+        followMarkerFlag = false;
 
         return;
     }
 
-    else {
-        // When a button is pressed to follow device, fetch all other buttons and reset their properties.
-        // Also clear interval in case the map is already following a device.
-        document.querySelectorAll('.action-buttons button').forEach(btn => {
-            clearInterval(followMarkerIntervalHandler);
+    // When a button is pressed to follow device, fetch all other buttons and reset their properties.
+    // Also clear interval in case the map is already following a device.
+    document.querySelectorAll('.action-buttons button').forEach(btn => {
+        clearInterval(followMarkerIntervalHandler);
 
-            btn.setAttribute("data-following", "false");
-            btn.textContent = "Track";
-        });
+        btn.setAttribute("data-following", "false");
+        btn.textContent = "Track";
+    });
 
-        button.textContent = "Stop tracking";
-        button.setAttribute("data-following", "true");
-
-        panMap(device.marker);
-
-        followMarkerIntervalHandler = setInterval(() => {
-                panMap(device.id, device.marker);
-        }, 100);
-    }
+    button.textContent = "Stop tracking";
+    button.setAttribute("data-following", "true");
+    
+    panMap(device.marker);
+    
+    followMarkerFlag = true;
+    followMarkerIntervalHandler = setInterval(() => {
+            panMap(device.id, device.marker);
+    }, 100);
 }
 
 const panMap = function(deviceId, markerToFollow){
@@ -107,3 +107,31 @@ const panMap = function(deviceId, markerToFollow){
 
     map.setView(markerToFollow.getLatLng(), zoomLevel);
 }
+
+
+
+/**
+ * Map drag event listeners.
+ */
+map.on("dragstart", function(e){
+    // if (!followMarkerFlag) return;
+
+    // Swal.fire({
+    //     title: `Cannot drag the map while following a device!`,
+    //     toast: true,
+    //     position: "top",
+    //     showConfirmButton: false,
+    //     timerProgressBar: true,
+    //     timer: 3000,
+    //     icon: 'warning',
+    // });
+
+    // map.dragging.disable();
+});
+
+map.on("drag", function(e){
+});
+
+map.on("dragend", function(e){
+    // map.dragging.enable();
+}); 
