@@ -62,7 +62,7 @@ map.on("zoomend", () => {
  * Pressing the button again stops the following.
  */
 let followMarkerFlag = false;
-let followMarkerInterval = 0.5;
+let followMarkerInterval = 0.1;
 let followMarkerIntervalHandler;
 const followDevice = function(button, device){
     if (button.getAttribute("data-following") === "true"){
@@ -72,14 +72,22 @@ const followDevice = function(button, device){
         button.textContent = "Track";
         followMarkerFlag = false;
 
+        Swal.fire({
+        title: `Stopped tracking ${device.name}`,
+        toast: true,
+        position: "top",
+        showConfirmButton: false,
+        timerProgressBar: true,
+        timer: 3000,
+        icon: 'info',
+    });
+
         return;
     }
 
-    // When a button is pressed to follow device, fetch all other buttons and reset their properties.
-    // Also clear interval in case the map is already following a device.
-    document.querySelectorAll('.action-buttons button').forEach(btn => {
-        clearInterval(followMarkerIntervalHandler);
+    clearInterval(followMarkerIntervalHandler);
 
+    document.querySelectorAll('.action-buttons button').forEach(btn => {
         btn.setAttribute("data-following", "false");
         btn.textContent = "Track";
     });
@@ -92,7 +100,17 @@ const followDevice = function(button, device){
     followMarkerFlag = true;
     followMarkerIntervalHandler = setInterval(() => {
             panMap(device.id, device.marker);
-    }, 100);
+    }, followMarkerInterval * 1000);
+
+    Swal.fire({
+        title: `Tracking ${device.name}`,
+        toast: true,
+        position: "top",
+        showConfirmButton: false,
+        timerProgressBar: true,
+        timer: 3000,
+        icon: 'info',
+    });
 }
 
 const panMap = function(deviceId, markerToFollow){
@@ -114,24 +132,30 @@ const panMap = function(deviceId, markerToFollow){
  * Map drag event listeners.
  */
 map.on("dragstart", function(e){
-    // if (!followMarkerFlag) return;
+    if (!followMarkerFlag) return;
 
-    // Swal.fire({
-    //     title: `Cannot drag the map while following a device!`,
-    //     toast: true,
-    //     position: "top",
-    //     showConfirmButton: false,
-    //     timerProgressBar: true,
-    //     timer: 3000,
-    //     icon: 'warning',
-    // });
+    Swal.fire({
+        title: `Map dragged, stopped tracking.`,
+        toast: true,
+        position: "top",
+        showConfirmButton: false,
+        timerProgressBar: true,
+        timer: 3000,
+        icon: 'warning',
+    });
 
-    // map.dragging.disable();
+    clearInterval(followMarkerIntervalHandler);
+
+    document.querySelectorAll('.action-buttons button').forEach(btn => {
+        btn.setAttribute("data-following", "false");
+        btn.textContent = "Track";
+    });
+
+    followMarkerFlag = false;
 });
 
 map.on("drag", function(e){
 });
 
 map.on("dragend", function(e){
-    // map.dragging.enable();
 }); 
